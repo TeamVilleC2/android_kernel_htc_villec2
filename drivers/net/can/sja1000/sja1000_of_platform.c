@@ -136,7 +136,7 @@ static int __devinit sja1000_ofp_probe(struct platform_device *ofdev)
 	priv->write_reg = sja1000_ofp_write_reg;
 
 	prop = of_get_property(np, "nxp,external-clock-frequency", &prop_size);
-	if (prop && (prop_size ==  sizeof(u32)))
+	if (prop && (prop_size == sizeof(u32)))
 		priv->can.clock.freq = *prop / 2;
 	else
 		priv->can.clock.freq = SJA1000_OFP_CAN_CLOCK; /* default */

@@ -43,7 +43,8 @@
 #include <linux/atmel_qt602240.h>
 #include <linux/input/cy8c_cs.h>
 
-
+#define QCE_SIZE		0x10000
+#define QCE_0_BASE		0x18500000
 #ifdef CONFIG_ANDROID_PMEM
 #include <linux/android_pmem.h>
 #endif
