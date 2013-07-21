@@ -25,6 +25,7 @@
 #include <linux/bootmem.h>
 #include <linux/leds-pm8058.h>
 #include <linux/htc_flashlight.h>
+#include <linux/usb/android_composite.h>
 #include <linux/msm_adc.h>
 #include <linux/m_adcproc.h>
 #include <linux/mfd/marimba.h>
@@ -1271,19 +1272,20 @@ static struct platform_device usb_mass_storage_device = {
 };
 
 static struct android_usb_platform_data android_usb_pdata = {
-	.vendor_id	= 0x0BB4,
-	.product_id	= 0x0cf7,
-	.version	= 0x0100,
-	.product_name		= "Android Phone",
-	.manufacturer_name	= "HTC",
-	.num_products = ARRAY_SIZE(usb_products),
-	.products = usb_products,
-	.num_functions = ARRAY_SIZE(usb_functions_all),
-	.functions = usb_functions_all,
-	.update_pid_and_serial_num = usb_diag_update_pid_and_serial_num,
-	.fserial_init_string = "tty:modem,tty:autobot,tty:serial,tty:autobot",
-	.nluns = 2,
-	.usb_id_pin_gpio = VILLEC2_GPIO_USB_ID,
+  .vendor_id  = 0x0BB4,
+  .product_id  = 0x0cbb,
+  .version  = 0x0100,
+  .product_name    = "Android Phone",
+  .manufacturer_name  = "HTC",
+  .num_products = ARRAY_SIZE(usb_products),
+  .products = usb_products,
+  .num_functions = ARRAY_SIZE(usb_functions_all),
+  .functions = usb_functions_all,
+  .update_pid_and_serial_num = usb_diag_update_pid_and_serial_num,
+  .fserial_init_string = "sdio:modem,tty,tty,tty:serial",
+  .usb_id_pin_gpio = villec2_GPIO_USB_ID,
+  .RndisDisableMPDecision = true,
+  .nluns = 2,
 };
 
 static struct platform_device android_usb_device = {
