@@ -46,7 +46,7 @@
 #define READDONE_IDX_ID 8
 
 static DEFINE_MUTEX(session_lock);
-
+#define HTC_POPP_TOPOLOGY				0x10000002
 /* session id: 0 reserved */
 static struct audio_client *session[SESSION_MAX+1];
 static int32_t q6asm_mmapcallback(struct apr_client_data *data, void *priv);
@@ -84,6 +84,15 @@ static int q6asm_session_alloc(struct audio_client *ac)
 	}
 	mutex_unlock(&session_lock);
 	return -ENOMEM;
+}
+
+static struct asm_mmap this_mmap;
+static struct q6asm_ops default_qops;
+static struct q6asm_ops *qops = &default_qops;
+
+void htc_8x60_register_q6asm_ops(struct q6asm_ops *ops)
+{
+	qops = ops;
 }
 
 static void q6asm_session_free(struct audio_client *ac)
@@ -881,6 +890,15 @@ int q6asm_open_write(struct audio_client *ac, uint32_t format)
 	open.sink_endpoint = ASM_END_POINT_DEVICE_MATRIX;
 	open.stream_handle = 0x00;
 	open.post_proc_top = DEFAULT_POPP_TOPOLOGY;
+/* change to HTC_POPP_TOPOLOGY to support Q6 effect */
+	if (qops->get_q6_effect) {
+		int mode = qops->get_q6_effect();
+		if (mode == 0) { /* POPP */
+			pr_aud_info("%s: change to HTC_POPP_TOPOLOGY\n",
+				    __func__);
+			open.post_proc_top = HTC_POPP_TOPOLOGY;
+	}
+	}
 
 	switch (format) {
 	case FORMAT_LINEAR_PCM:

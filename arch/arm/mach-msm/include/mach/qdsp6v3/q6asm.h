@@ -61,7 +61,9 @@
 #define CMD_FLUSH          0x0002
 #define CMD_EOS            0x0003
 #define CMD_CLOSE          0x0004
-
+struct q6asm_ops {
+	int (*get_q6_effect) (void);
+};
 /* bit 0:1 represents priority of stream */
 #define STREAM_PRIORITY_NORMAL	0x0000
 #define STREAM_PRIORITY_LOW	0x0001
@@ -260,5 +262,5 @@ int q6asm_set_io_mode(struct audio_client *ac, uint32_t mode);
 /* Get Service ID for APR communication */
 int q6asm_get_apr_service_id(int session_id);
 #endif
-
+void htc_8x60_register_q6asm_ops(struct q6asm_ops *ops);
 #endif /* __Q6_ASM_H__ */
