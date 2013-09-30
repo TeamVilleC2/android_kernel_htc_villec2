@@ -665,6 +665,8 @@ static void atom_op_delay(atom_exec_context *ctx, int *ptr, int arg)
 	SDEBUG("   count: %d\n", count);
 	if (arg == ATOM_UNIT_MICROSEC)
 		udelay(count);
+	else if (!drm_can_sleep())
+		mdelay(count);
 	else
 		msleep(count);
 }
@@ -1220,12 +1222,17 @@ int atom_execute_table(struct atom_context *ctx, int index, uint32_t * params)
 	int r;
 
 	mutex_lock(&ctx->mutex);
+	/* reset data block */
+	ctx->data_block = 0;
 	/* reset reg block */
 	ctx->reg_block = 0;
 	/* reset fb window */
 	ctx->fb_base = 0;
 	/* reset io mode */
 	ctx->io_mode = ATOM_IO_MM;
+	/* reset divmul */
+	ctx->divmul[0] = 0;
+	ctx->divmul[1] = 0;
 	r = atom_execute_table_locked(ctx, index, params);
 	mutex_unlock(&ctx->mutex);
 	return r;
@@ -1253,6 +1260,9 @@ struct atom_context *atom_parse(struct card_info *card, void *bios)
 	char *str;
 	char name[512];
 	int i;
+
+	if (!ctx)
+		return NULL;
 
 	ctx->card = card;
 	ctx->bios = bios;
